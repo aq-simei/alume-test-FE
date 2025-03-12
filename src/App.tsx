@@ -1,19 +1,14 @@
-import { Rocket } from "lucide-react";
-import { ThemeProvider } from "./components/theme/provider";
-import { ModeToggle } from "./components/theme/toggler";
+import { Helmet, HelmetProvider } from "react-helmet-async";
+import { RouterProvider } from "react-router";
+import { router } from "./router/routes";
 
-function App() {
+const App = () => {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="w-screen h-screen flex justify-center items-center space-x-2">
-        <h1 className="text-3xl font-bold text-foreground">Hello world</h1>
-        <>
-          <Rocket size={30} className="text-zinc-700"/>
-        </>
-        <ModeToggle />
-      </div>
-    </ThemeProvider>
+    <HelmetProvider>
+      <Helmet titleTemplate="%s | Space Dash"/>
+      <RouterProvider router={router} />
+    </HelmetProvider>
   );
-}
+};
 
 export default App;
