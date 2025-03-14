@@ -10,7 +10,7 @@ const App = () => {
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="theme">
+      <ThemeProvider defaultTheme="dark" storageKey="theme">
         <HelmetProvider>
           <BookingProvider>
             <Toaster />
