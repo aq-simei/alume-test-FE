@@ -1,12 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700&display=swap");
 @import "tailwindcss";
-
+@plugin "tailwindcss-motion";
 @plugin "tailwindcss-animate";
-
 @custom-variant dark (&:is(.dark *));
-
 :root {
-  font-family: 'Nunito';
+  font-family: "Nunito";
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
