@@ -28,7 +28,7 @@ const Input = ({
         />
       </div>
       {props.error ? (
-        <span className="text-red-500 text-sm text-center font-semibold">* {props.error}</span>
+        <span className="text-red-500 text-sm font-semibold">* {props.error}</span>
       ) : null}
     </div>
   );
