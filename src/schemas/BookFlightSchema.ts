@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const BookFlightFormSchema = z.object({
   flightId: z.string({ message: "Flight id required" }), // it is a hash string with 24 characters
-  name: z.string({ message: "Name is required" }).max(100),
+  name: z.string().min(1, {message: "Name is required"}).max(100),
   age: z
     .number({ message: "Age is required" })
     .int({ message: "Age must be a whole number" })
