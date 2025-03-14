@@ -20,8 +20,19 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api/axios";
 import { UpcomingFlight } from "@/@types/UpcomingFlight";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useNavigate } from "react-router-dom";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 
 export const Home = () => {
+  const navigate = useNavigate();
   const fetchSpaceXFlights = async () => {
     try {
       const response = await api.get("/launches/upcoming");
@@ -36,6 +47,7 @@ export const Home = () => {
             return null;
           }
           return {
+            rtasdasd: flight.date_local,
             id: flight.id,
             number: flight.flight_number,
             name: flight.name,
@@ -50,27 +62,31 @@ export const Home = () => {
   };
   const onSubmit = (data: BookFlightFormValues) => {
     toast.info("You submitted the following values:" + data);
+    navigate(`/success/${data.flightId}`);
   };
 
   const onError = (error: any) => {
+    console.log(form.getValues());
     console.error(error);
   };
 
-  const { data, isError, error, isSuccess } = useQuery({
+  const { data, isError } = useQuery({
     queryKey: ["upcomingFlights"],
     queryFn: fetchSpaceXFlights,
   });
 
-  const {
-    formState: { errors },
-    setValue,
-    handleSubmit,
-  } = useForm<BookFlightFormValues>({
+  const form = useForm<BookFlightFormValues>({
     resolver: zodResolver(BookFlightFormSchema),
     defaultValues: {
       healthIssues: false,
+      name: "",
     },
   });
+
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = form;
 
   return (
     <main className="w-full items-center justify-center flex-col">
@@ -115,78 +131,120 @@ export const Home = () => {
           partnership. Select your destination and embark on the journey of a
           lifetime.
         </span>
-        <h2 className="text-2xl font-semibold text-blue-200 my-4 w-2/5 text-start">
-          Book a flight now:
-        </h2>
-        <form
-          className="flex w-3/5 flex-col space-y-4 p-4 rounded-2xl shadow-zinc-600 shadow-sm items-center"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <div className="flex-col flex w-fit space-x-2">
-            <div className="flex-row flex w-fit space-x-2">
-              <Label className="font-bold text-lg">Select the flight: </Label>
-              <Select
-                defaultValue=""
-                onValueChange={(value) => setValue("flightId", value)}
-              >
-                <SelectTrigger className="w-fit font-bold">
-                  <SelectValue placeholder="Pick a flight" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isError && <span className="p-4">Error:  Could Not Find Flights</span>}
-                  {data &&
-                    data.map((flight: any) => (
-                      <SelectItem key={flight.id} value={flight.id}>
-                        {flight.name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
+        <Form {...form}>
+          <form
+            className="flex container flex-col rounded-2xl space-y-2"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <FormDescription className="text-xl font-bold text-primar">
+              Book a flight right now :
+            </FormDescription>
+            <FormField
+              name="flightId"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-bold text-lg">
+                    Select the flight:{""}
+                  </FormLabel>
+                  <Select defaultValue="" onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="w-fit font-bold">
+                        <SelectValue
+                          placeholder="Pick a flight"
+                          className="w-full"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="h-60">
+                      {isError && (
+                        <span className="p-4">
+                          Error: Could Not Find Flights
+                        </span>
+                      )}
+                      {data &&
+                        data.map((flight: any) => (
+                          <SelectItem
+                            key={flight.id}
+                            value={flight.id}
+                            className="hover:motion-preset w-full"
+                          >
+                            {flight.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
             {errors.flightId?.message && (
               <span className="text-red-500 text-sm text-center">
                 * {errors.flightId?.message}
               </span>
             )}
-          </div>
-          <Input<BookFlightFormValues>
-            name="name"
-            label="Full name"
-            className="w-2/5"
-            onChange={(e) => setValue("name", e.target.value)}
-            placeholder="Your full name"
-            error={errors.name?.message}
-          />
-          <div className="flex-row flex w-fit space-x-2">
-            <Input<BookFlightFormValues>
-              label="Age"
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <Label className="font-bold text-lg">Full name: </Label>
+                  <Input
+                    name="name"
+                    className=""
+                    onChange={field.onChange}
+                    placeholder="Your full name"
+                    error={errors.name?.message}
+                  />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="age"
-              onChange={(e) => setValue("age", parseInt(e.target.value))}
-              placeholder="How old are you?"
-              className="text-center w-3/5"
-              error={errors.age?.message}
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <Label className="font-bold text-lg" htmlFor="age">
+                      Age:
+                    </Label>
+                    <Input
+                      name="age"
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      placeholder="How old are you?"
+                      error={errors.age?.message}
+                    />
+                  </FormItem>
+                );
+              }}
             />
-          </div>
-          <div className="flex-row flex w-fit space-x-2 justify-center items-center">
-            <Input<BookFlightFormValues>
-              type="checkbox"
-              label="Health Issues / Clinic conditions"
-              onChange={(e) => setValue("healthIssues", e.target.checked)}
-              title="Do you have any health issues ?"
+            <FormField
+              control={form.control}
               name="healthIssues"
-              className="w-6 h-6"
-              error={errors.healthIssues?.message}
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center">
+                  <Label className="font-bold text-lg" htmlFor="healthIssues">
+                    Do you have any health issues?
+                  </Label>
+                  <Checkbox
+                    id="healthIssues"
+                    onCheckedChange={field.onChange}
+                    title="Do you have any health issues ?"
+                    name="healthIssues"
+                    className="w-6 h-6"
+                  />
+                </FormItem>
+              )}
             />
-          </div>
-          <Button
-            onClick={handleSubmit(onSubmit, onError)}
-            type="submit"
-            variant={"outline"}
-            className="border-2 font-bold hover:cursor-pointer hover:shadow-sm hover:bg-border  hover:shadow-border hover:text-primary transition-all duration-400 ease-in-out"
-          >
-            Buy Ticket
-          </Button>
-        </form>
+            <Button
+              onClick={handleSubmit(onSubmit, onError)}
+              type="submit"
+              variant={"outline"}
+              className="border-2 font-bold hover:cursor-pointer hover:shadow-sm hover:bg-border  hover:shadow-border hover:text-primary transition-all duration-400 ease-in-out"
+            >
+              Buy Ticket
+            </Button>
+          </form>
+        </Form>
       </div>
       <section className="py-12 bg-background">
         <div className="text-center mb-12">

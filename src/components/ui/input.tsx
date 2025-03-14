@@ -1,26 +1,20 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { FieldValues } from "react-hook-form";
-import { Label } from "./label";
 
-type CustomInputProps<T extends FieldValues> = React.ComponentProps<"input"> & {
-  name: keyof T;
+type CustomInputProps = React.ComponentProps<"input"> & {
   error?: string;
-  label: string;
 };
 
-const Input = <T extends FieldValues>({
+const Input = ({
   className,
   type,
   name,
-  label,
   ...props
-}: CustomInputProps<T>) => {
+}: CustomInputProps) => {
   return (
     <div className="flex flex-col w-full space-y-1">
       <div className="flex-row flex w-full justify-center space-x-2">
-        <Label className="font-bold text-lg">{label}: </Label>
         <input
           type={type}
           data-slot="input"
