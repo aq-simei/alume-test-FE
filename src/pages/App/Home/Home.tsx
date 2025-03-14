@@ -1,6 +1,8 @@
-import { Calendar, Rocket, Users } from "lucide-react";
+"use client";
+
+import { Calendar, Rocket, Users, Star } from "lucide-react";
 import { Helmet } from "react-helmet-async";
-import { useForm } from "react-hook-form"; // Added useFormField import
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Select,
@@ -13,12 +15,11 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import {
   BookFlightFormSchema,
-  BookFlightFormValues,
+  type BookFlightFormValues,
 } from "@/schemas/BookFlightSchema";
-import { Label } from "@/components/ui/label";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api/axios";
-import { UpcomingFlight } from "@/@types/UpcomingFlight";
+import type { UpcomingFlight } from "@/@types/UpcomingFlight";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
@@ -30,9 +31,18 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import { useBookingContext } from "@/hooks/useBookingContext";
+import { Card, CardContent } from "@/components/ui/card";
 
 export const Home = () => {
   const navigate = useNavigate();
+  const {
+    updateFlightNumber,
+    updateHealthComplications,
+    updateUserAge,
+    updateUserName,
+  } = useBookingContext();
+
   const fetchSpaceXFlights = async () => {
     try {
       const response = await api.get("/launches/upcoming");
@@ -47,7 +57,6 @@ export const Home = () => {
             return null;
           }
           return {
-            rtasdasd: flight.date_local,
             id: flight.id,
             number: flight.flight_number,
             name: flight.name,
@@ -60,8 +69,13 @@ export const Home = () => {
       console.error(error);
     }
   };
+
   const onSubmit = (data: BookFlightFormValues) => {
-    toast.info("You submitted the following values:" + data);
+    toast.info("Form Submitted Successfully", { position: "top-center" });
+    updateFlightNumber(data.flightId);
+    updateHealthComplications(data.healthIssues);
+    updateUserAge(data.age);
+    updateUserName(data.name);
     navigate(`/success/${data.flightId}`);
   };
 
@@ -88,8 +102,29 @@ export const Home = () => {
     formState: { errors },
   } = form;
 
+  const features = [
+    {
+      icon: Rocket,
+      title: "Cutting-Edge Technology",
+      description:
+        "Experience space travel with SpaceX's latest spacecraft technology and safety systems.",
+    },
+    {
+      icon: Users,
+      title: "Expert Crew",
+      description:
+        "Our missions are staffed by experienced astronauts and SpaceX engineers.",
+    },
+    {
+      icon: Calendar,
+      title: "Flexible Scheduling",
+      description:
+        "Choose from multiple launch dates to fit your schedule and preferences.",
+    },
+  ];
+
   return (
-    <main className="w-full items-center justify-center flex-col">
+    <main className="w-full min-h-screen relative">
       <Helmet title="Home">
         <meta
           name="description"
@@ -114,181 +149,188 @@ export const Home = () => {
         />
         <meta name="twitter:image" content="URL_to_image" />
       </Helmet>
-      <div className="flex flex-col justify-center items-center">
-        <div className="flex lg:flex-row justify-center items-center space-x-2 sm:flex-col max-sm:flex-col md:flex-col">
-          <h1 className="text-3xl font-bold text-purple-700 motion-preset-fade-lg text-center">
-            Buckle Up For Your Next Space Adventure
-          </h1>
-          <>
-            <Rocket
-              size={30}
-              className="text-purple-700 motion-preset-slide-left-l motion-preset-fade-lg text-center"
-            />
-          </>
-        </div>
-        <span className="text-lg font-semibold w-3/5 motion-preset-fade-lg motion-preset-rebound-down text-center">
-          Experience the thrill of space travel with our exclusive SpaceX
-          partnership. Select your destination and embark on the journey of a
-          lifetime.
-        </span>
-        <Form {...form}>
-          <form
-            className="flex container flex-col rounded-2xl space-y-2"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <FormDescription className="text-xl font-bold text-primar">
-              Book a flight right now :
-            </FormDescription>
-            <FormField
-              name="flightId"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-bold text-lg">
-                    Select the flight:{""}
-                  </FormLabel>
-                  <Select defaultValue="" onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger className="w-fit font-bold">
-                        <SelectValue
-                          placeholder="Pick a flight"
-                          className="w-full"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="h-60">
-                      {isError && (
-                        <span className="p-4">
-                          Error: Could Not Find Flights
-                        </span>
-                      )}
-                      {data &&
-                        data.map((flight: any) => (
-                          <SelectItem
-                            key={flight.id}
-                            value={flight.id}
-                            className="hover:motion-preset w-full"
-                          >
-                            {flight.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-            {errors.flightId?.message && (
-              <span className="text-red-500 text-sm text-center">
-                * {errors.flightId?.message}
-              </span>
-            )}
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <Label className="font-bold text-lg">Full name: </Label>
-                  <Input
-                    name="name"
-                    className=""
-                    onChange={field.onChange}
-                    placeholder="Your full name"
-                    error={errors.name?.message}
-                  />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="age"
-              render={({ field }) => {
-                return (
-                  <FormItem>
-                    <Label className="font-bold text-lg" htmlFor="age">
-                      Age:
-                    </Label>
-                    <Input
-                      name="age"
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      placeholder="How old are you?"
-                      error={errors.age?.message}
-                    />
-                  </FormItem>
-                );
-              }}
-            />
-            <FormField
-              control={form.control}
-              name="healthIssues"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center">
-                  <Label className="font-bold text-lg" htmlFor="healthIssues">
-                    Do you have any health issues?
-                  </Label>
-                  <Checkbox
-                    id="healthIssues"
-                    onCheckedChange={field.onChange}
-                    title="Do you have any health issues ?"
-                    name="healthIssues"
-                    className="w-6 h-6"
-                  />
-                </FormItem>
-              )}
-            />
-            <Button
-              onClick={handleSubmit(onSubmit, onError)}
-              type="submit"
-              variant={"outline"}
-              className="border-2 font-bold hover:cursor-pointer hover:shadow-sm hover:bg-border  hover:shadow-border hover:text-primary transition-all duration-400 ease-in-out"
-            >
-              Buy Ticket
-            </Button>
-          </form>
-        </Form>
-      </div>
-      <section className="py-12 bg-background">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Why Choose SpaceVoyager?</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            We partner with SpaceX to provide the safest and most advanced space
-            travel experience available to civilians.
+
+      <div className="container mx-auto px-4 py-12 relative z-10">
+        <div className="flex flex-col justify-center items-center text-center mb-16">
+          <div className="relative mb-6">
+            <Star className="absolute -top-8 -left-8 w-6 h-6 text-primary/60 motion-preset-pulse-md" />
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent mb-4 motion-preset-expand">
+              Buckle Up For Your Next Space Adventure
+            </h1>
+            <Star className="absolute -bottom-8 -right-8 w-6 h-6 text-primary/60" />
+          </div>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 motion-preset-expand">
+            Experience the thrill of space travel with our exclusive SpaceX
+            partnership. Select your destination and embark on the journey of a
+            lifetime.
           </p>
+          <Rocket className="w-12 h-12 text-primary motion-opacity-in-0 motion-delay-500" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center p-6">
-            <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Rocket className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="text-xl font-bold mb-2">Cutting-Edge Technology</h3>
-            <p className="text-gray-400">
-              Experience space travel with SpaceX's latest spacecraft technology
-              and safety systems.
+
+        <Card className="max-w-2xl mx-auto mb-24 border-primary/20 bg-card/80 backdrop-blur-sm motion-preset-fade-lg motion-duration-1000 motion-delay-500">
+          <CardContent className="p-6">
+            <Form {...form}>
+              <form
+                className="space-y-6 flex flex-col w-full"
+                onSubmit={handleSubmit(onSubmit, onError)}
+              >
+                <FormDescription className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
+                  <Star className="w-6 h-6 motion-preset-pulse-sm motion-ease-bounce" />
+                  Book Your Space Flight
+                </FormDescription>
+
+                <FormField
+                  name="flightId"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-lg font-semibold">
+                        Select Your Mission
+                      </FormLabel>
+                      <Select defaultValue="" onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger className="w-full bg-background/50 border-primary/20">
+                            <SelectValue placeholder="Choose your destination" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="max-h-60">
+                          {isError ? (
+                            <div className="p-4 text-destructive">
+                              Error: Could Not Find Flights
+                            </div>
+                          ) : (
+                            data?.map((flight: any) => (
+                              <SelectItem
+                                key={flight.id}
+                                value={flight.id}
+                                className="hover:bg-primary/10"
+                              >
+                                {flight.name}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                      {errors.flightId?.message && (
+                        <p className="text-destructive text-sm mt-1">
+                          {errors.flightId.message}
+                        </p>
+                      )}
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex flex-col w-full md:flex-row gap-6">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel className="text-lg font-semibold">
+                          Full Name
+                        </FormLabel>
+                        <Input
+                          {...field}
+                          className="bg-background/50 border-primary/20"
+                          placeholder="Enter your full name"
+                        />
+                        {errors.name?.message && (
+                          <p className="text-destructive text-sm mt-1">
+                            {errors.name.message}
+                          </p>
+                        )}
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="age"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel className="text-lg font-semibold">
+                          Age
+                        </FormLabel>
+                        <Input
+                          type="number"
+                          className="bg-background/50 border-primary/20"
+                          placeholder="Enter your age"
+                          onChange={(e) =>
+                            field.onChange(Number.parseInt(e.target.value))
+                          }
+                        />
+                        {errors.age?.message && (
+                          <p className="text-destructive text-sm mt-1">
+                            {errors.age.message}
+                          </p>
+                        )}
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="healthIssues"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-4 self-center">
+                      <FormLabel className="text-lg font-semibold">
+                        Health Considerations
+                      </FormLabel>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="w-6 h-6 border-primary/20"
+                      />
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="md:w-2/5 w-full bg-primary font-bold text-primary-foreground self-center motion-safe:animate-scale-in motion-delay-700 hover:bg-background hover:border-2 hover:border-border hover:text-primary"
+                >
+                  <Rocket className="w-5 h-5 mr-2" />
+                  Buy Ticket
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+
+        <section className="py-16 motion-preset-fade-lg motion-duration-1000 motion-delay-500">
+          <div className="text-center mb-16 motion-safe:animate-fade-in motion-delay-700">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary">
+              Why Choose SpaceVoyager?
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              We partner with SpaceX to provide the safest and most advanced
+              space travel experience available to civilians.
             </p>
           </div>
 
-          <div className="text-center p-6">
-            <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Users className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="text-xl font-bold mb-2">Expert Crew</h3>
-            <p className="text-gray-400">
-              Our missions are staffed by experienced astronauts and SpaceX
-              engineers.
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <Card
+                key={feature.title}
+                className="border-primary/10 bg-card/60 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 motion-safe:animate-fade-in motion-safe:animate-slide-in-bottom"
+                style={{
+                  animationDelay: `${(index + 1) * 200}ms`,
+                }}
+              >
+                <CardContent className="p-6 text-center">
+                  <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 motion-safe:animate-scale-in motion-delay-1000">
+                    <feature.icon className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-
-          <div className="text-center p-6">
-            <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Calendar className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="text-xl font-bold mb-2">Flexible Scheduling</h3>
-            <p className="text-gray-400">
-              Choose from multiple launch dates to fit your schedule and
-              preferences.
-            </p>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </main>
   );
 };
