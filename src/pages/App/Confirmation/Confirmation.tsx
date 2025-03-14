@@ -1,5 +1,3 @@
-"use client";
-
 import type { UpcomingFlight } from "@/@types/UpcomingFlight";
 import { api } from "@/api/axios";
 import {

@@ -1,5 +1,3 @@
-"use client";
-
 import { Calendar, Rocket, Users, Star } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
