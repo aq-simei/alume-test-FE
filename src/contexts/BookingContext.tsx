@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useMemo, useState } from "react";
 
-interface BookingContextType {
+export type BookingContextType = {
   userName: string;
   userAge: number;
   flightNumber: string;
@@ -9,7 +9,7 @@ interface BookingContextType {
   updateUserAge: (age: number) => void;
   updateFlightNumber: (flight: string) => void;
   updateHealthComplications: (complications: boolean) => void;
-}
+};
 
 export const BookingContext = createContext<BookingContextType | undefined>(
   undefined
@@ -39,12 +39,7 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
       updateFlightNumber,
       updateHealthComplications,
     }),
-    [
-      flightNumber,
-      healthComplications,
-      userName,
-      userAge,
-    ]
+    [flightNumber, healthComplications, userName, userAge]
   );
 
   return (
