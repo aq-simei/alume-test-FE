@@ -4,6 +4,7 @@ import { router } from "./router/routes";
 import { ThemeProvider } from "./components/theme/provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "./components/ui/sonner";
+import { BookingProvider } from "./contexts/BookingContext";
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -11,9 +12,11 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="theme">
         <HelmetProvider>
-          <Toaster />
-          <Helmet titleTemplate="%s | Space Dash" />
-          <RouterProvider router={router} />
+          <BookingProvider>
+            <Toaster />
+            <Helmet titleTemplate="%s | Space Dash" />
+            <RouterProvider router={router} />
+          </BookingProvider>
         </HelmetProvider>
       </ThemeProvider>
     </QueryClientProvider>
