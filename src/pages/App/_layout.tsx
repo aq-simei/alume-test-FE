@@ -8,7 +8,7 @@ export const AppLayout = () => {
     <>
       <div className="w-screen min-h-screen flex flex-col bg-background relative">
         {/* Background Stars */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0" data-testid="background-stars">
           {/* Small stars */}
           {[...Array(100)].map((_, i) => (
             <div
@@ -36,7 +36,7 @@ export const AppLayout = () => {
                 left: `${Math.random() * 100}%`,
                 animationDelay: `${Math.random() * 8}s`,
                 animationDuration: `${4 + Math.random() * 3}s`,
-                boxShadow: "0 0 8px rgba(255, 255, 255, 0.6)", // Added glow effect
+                boxShadow: "0 0 8px rgba(255, 255, 255, 0.6)",
               }}
             />
           ))}
@@ -47,7 +47,7 @@ export const AppLayout = () => {
           <Outlet />
         </div>
 
-        <footer className="border-t border-gray-800 py-8 relative z-10">
+        <footer className="border-t border-gray-800 py-8 relative z-10" data-testid="app-footer">
           <div className="w-full px-4">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="flex items-center gap-2 mb-4 md:mb-0">
@@ -55,7 +55,7 @@ export const AppLayout = () => {
                 <span className="text-lg font-bold">Space Dash</span>
               </div>
               <div className="text-sm text-gray-400">
-                &copy; {new Date().getFullYear()} SpaceVoyager. All rights reserved. In partnership with SpaceX.
+                &copy; {new Date().getFullYear()} Space Dash. All rights reserved. In partnership with SpaceX.
               </div>
             </div>
           </div>
