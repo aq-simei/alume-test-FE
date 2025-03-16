@@ -1,54 +1,48 @@
-# React + TypeScript + Vite
+# Space Board
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Description
 
-Currently, two official plugins are available:
+Space Board is a modern web application built with the following technologies:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React**: A JavaScript library for building user interfaces.
+- **React Router**: Declarative routing for React.
+- **Tailwind CSS**: A utility-first CSS framework.
+- **Radix UI**: Unstyled, accessible components for building high-quality design systems and web apps.
+- **Motion Tailwindcss**: Motion animation library integration for tailwindcss
+- **React Hook Form**: Performant, flexible, and extensible forms with easy-to-use validation.
+- **TanStack Query**: Powerful asynchronous state management for TS/JS, React, Solid, Vue, Svelte, and Angular.
+- **Axios**: Promise-based HTTP client for the browser and Node.js.
+- **Zod**: TypeScript-first schema declaration and validation library.
+- **Vite**: Next-generation frontend tooling.
+- **Vitest**: A blazing fast unit test framework powered by Vite.
+- **Cypress**: Fast, easy, and reliable testing for anything that runs in a browser.
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Follow these steps to set up the project:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+1. **Clone the repository:**
+    ```sh
+    git clone git@github/com:aq-simei/alume-test-FE.git
+    cd space-board
+    ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. **Install dependencies:**
+    ```sh
+    npm install
+    ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+3. **Run the project:**
+    ```sh
+    npm run dev
+    ```
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+4. **Run unit tests:**
+    ```sh
+    npm run test
+    ```
+
+5. **Run integration tests:**
+    ```sh
+    npm run e2e
+    ```
