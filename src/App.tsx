@@ -1,4 +1,3 @@
-import { Helmet, HelmetProvider } from "react-helmet-async";
 import { RouterProvider } from "react-router";
 import { router } from "./router/routes";
 import { ThemeProvider } from "./components/theme/provider";
@@ -11,13 +10,10 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="theme">
-        <HelmetProvider>
-          <BookingProvider>
-            <Toaster />
-            <Helmet titleTemplate="%s | Space Dash" />
-            <RouterProvider router={router} />
-          </BookingProvider>
-        </HelmetProvider>
+        <BookingProvider>
+          <Toaster />
+          <RouterProvider router={router} />
+        </BookingProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
